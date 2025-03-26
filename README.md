@@ -234,9 +234,8 @@ This guide provides step-by-step instructions to deploy Strapi on a **Kubernetes
    Apply the manifest:
    ```sh
    kubectl apply -f strapi.yaml
-   ```
+ ```##(strapi-ingress.yaml)##
 **Ingress (Expose Strapi) (strapi-ingress.yaml)**
-
 ```apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -255,8 +254,8 @@ spec:
                 name: strapi-service
                 port:
                   number: 80
+---
 🔹 Make sure you have an Ingress controller like Nginx installed!```
-
 ---
 
 ## 4️⃣ Expose Strapi using Minikube
