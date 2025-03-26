@@ -59,7 +59,8 @@ Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/
 ---
 
 <sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>
-                                                                                                                                # Strapi Deployment on Kubernetes with Minikube
+
+# Strapi Deployment on Kubernetes with Minikube
 
 This guide provides step-by-step instructions to deploy Strapi on a **Kubernetes cluster using Minikube**.
 
@@ -114,58 +115,6 @@ This guide provides step-by-step instructions to deploy Strapi on a **Kubernetes
 
 2. **Apply the PostgreSQL deployment and service:**
 
-   ```yaml
-   apiVersion: apps/v1
-   kind: Deployment
-   metadata:
-     name: postgres
-   spec:
-     replicas: 1
-     selector:
-       matchLabels:
-         app: postgres
-     template:
-       metadata:
-         labels:
-           app: postgres
-       spec:
-         containers:
-           - name: postgres
-             image: postgres:latest
-             env:
-               - name: POSTGRES_DB
-                 valueFrom:
-                   secretKeyRef:
-                     name: postgres-secret
-                     key: POSTGRES_DB
-               - name: POSTGRES_USER
-                 valueFrom:
-                   secretKeyRef:
-                     name: postgres-secret
-                     key: POSTGRES_USER
-               - name: POSTGRES_PASSWORD
-                 valueFrom:
-                   secretKeyRef:
-                     name: postgres-secret
-                     key: POSTGRES_PASSWORD
-             ports:
-               - containerPort: 5432
-   ---
-   apiVersion: v1
-   kind: Service
-   metadata:
-     name: postgres
-   spec:
-     selector:
-       app: postgres
-     ports:
-       - protocol: TCP
-         port: 5432
-         targetPort: 5432
-   ```
-
-   Apply the manifest:
-
    ```sh
    kubectl apply -f postgres.yaml
    ```
@@ -174,70 +123,19 @@ This guide provides step-by-step instructions to deploy Strapi on a **Kubernetes
 
 ## 3️⃣ Deploy Strapi to Kubernetes
 
-1. **Create the Strapi deployment and service:**
-   ```yaml
-   apiVersion: apps/v1
-   kind: Deployment
-   metadata:
-     name: strapi
-   spec:
-     replicas: 1
-     selector:
-       matchLabels:
-         app: strapi
-     template:
-       metadata:
-         labels:
-           app: strapi
-       spec:
-         containers:
-           - name: strapi
-             image: vk2615/my-strapi:latest
-             env:
-               - name: DATABASE_CLIENT
-                 value: postgres
-               - name: DATABASE_HOST
-                 value: postgres
-               - name: DATABASE_PORT
-                 value: "5432"
-               - name: DATABASE_NAME
-                 valueFrom:
-                   secretKeyRef:
-                     name: postgres-secret
-                     key: POSTGRES_DB
-               - name: DATABASE_USERNAME
-                 valueFrom:
-                   secretKeyRef:
-                     name: postgres-secret
-                     key: POSTGRES_USER
-               - name: DATABASE_PASSWORD
-                 valueFrom:
-                   secretKeyRef:
-                     name: postgres-secret
-                     key: POSTGRES_PASSWORD
-             ports:
-               - containerPort: 1337
-   ---
-   apiVersion: v1
-   kind: Service
-   metadata:
-     name: strapi-service
-   spec:
-     selector:
-       app: strapi
-     ports:
-       - protocol: TCP
-         port: 1337
-         targetPort: 1337
-     type: NodePort
-   ```
-   Apply the manifest:
+1. **Apply the Strapi deployment and service:**
    ```sh
    kubectl apply -f strapi.yaml
-   
- ```##(strapi-ingress.yaml)##
-**Ingress (Expose Strapi) (strapi-ingress.yaml)**
-```apiVersion: networking.k8s.io/v1
+   ```
+
+---
+
+## 4️⃣ Deploy Ingress for Strapi
+
+Create a new file `ingress.yaml` and add the following configuration:
+
+```yaml
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: strapi-ingress
@@ -254,12 +152,20 @@ spec:
               service:
                 name: strapi-service
                 port:
-                  number: 80
----
-🔹 Make sure you have an Ingress controller like Nginx installed!```
+                  number: 1337
+```
+
+Apply the Ingress configuration:
+
+```sh
+kubectl apply -f ingress.yaml
+```
+
+Ensure that an **Ingress Controller** (like Nginx) is installed and configured properly.
+
 ---
 
-## 4️⃣ Expose Strapi using Minikube
+## 5️⃣ Expose Strapi using Minikube
 
 1. **Get the Strapi Service URL:**
 
@@ -288,5 +194,4 @@ spec:
 - **Set up Ingress to use a custom domain**
 
 ### 🚀 Happy Deploying!
-
 
