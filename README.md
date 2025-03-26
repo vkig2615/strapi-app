@@ -104,94 +104,131 @@ This guide provides step-by-step instructions to deploy Strapi on a **Kubernetes
 
 ## 2️⃣ Deploy PostgreSQL to Kubernetes
 
-1. **Create a Kubernetes secret for database credentials:**
+Create and apply the PostgreSQL deployment and service using `postgres.yaml`:
 
-   ```sh
-   kubectl create secret generic postgres-secret \
-     --from-literal=POSTGRES_DB=strapi \
-     --from-literal=POSTGRES_USER=strapi \
-     --from-literal=POSTGRES_PASSWORD=yourpassword
-   ```
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:latest
+          env:
+            - name: POSTGRES_DB
+              value: strapi
+            - name: POSTGRES_USER
+              value: strapi
+            - name: POSTGRES_PASSWORD
+              value: strapi_password
+          ports:
+            - containerPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+```
 
-2. **Apply the PostgreSQL deployment and service:**
+Apply the manifest:
 
-   ```sh
-   kubectl apply -f postgres.yaml
-   ```
+```sh
+kubectl apply -f postgres.yaml
+```
 
 ---
 
 ## 3️⃣ Deploy Strapi to Kubernetes
 
-1. **Apply the Strapi deployment and service:**
-   ```sh
-   kubectl apply -f strapi.yaml
-   ```
+Create and apply the Strapi deployment and service using `strapi.yaml`:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: strapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: strapi
+  template:
+    metadata:
+      labels:
+        app: strapi
+    spec:
+      containers:
+        - name: strapi
+          image: vk2615/my-strapi:latest
+          env:
+            - name: DATABASE_CLIENT
+              value: postgres
+            - name: DATABASE_HOST
+              value: postgres
+            - name: DATABASE_PORT
+              value: "5432"
+            - name: DATABASE_NAME
+              value: strapi
+            - name: DATABASE_USERNAME
+              value: strapi
+            - name: DATABASE_PASSWORD
+              value: strapi_password
+          ports:
+            - containerPort: 1337
+```
+
+Apply the manifest:
+
+```sh
+kubectl apply -f strapi.yaml
+```
 
 ---
 
-## 4️⃣ Deploy Ingress for Strapi
+## 4️⃣ Ingress Configuration
 
-Create a new file `ingress.yaml` and add the following configuration:
+Create and apply the Ingress using `ingress.yaml`:
 
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: strapi-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - host: strapi.local  # Change this based on your domain
+    - host: strapi.local
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: strapi-service
+                name: strapi
                 port:
                   number: 1337
 ```
 
-Apply the Ingress configuration:
+Apply the manifest:
 
 ```sh
 kubectl apply -f ingress.yaml
 ```
 
-Ensure that an **Ingress Controller** (like Nginx) is installed and configured properly.
-
----
-
-## 5️⃣ Expose Strapi using Minikube
-
-1. **Get the Strapi Service URL:**
-
-   ```sh
-   minikube service strapi-service --url
-   ```
-
-   Example output:
-
-   ```
-   http://192.168.49.2:30080
-   ```
-
-2. **Access Strapi Admin Panel:** Open the following URL in your browser:
-
-   ```
-   http://192.168.49.2:30080/admin
-   ```
-
----
-
-## 🎯 Next Steps
-
-- **Use Vault for secrets management** instead of Kubernetes secrets
-- **Automate deployments using ArgoCD**
-- **Set up Ingress to use a custom domain**
-
-### 🚀 Happy Deploying!
-
+**Happy Deploying! 🚀**
