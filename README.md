@@ -77,7 +77,7 @@ This guide provides step-by-step instructions to deploy Strapi on a **Kubernetes
 1. **Clone your Strapi project or use the official Strapi image:**
 
    ```sh
-   git clone https://github.com/strapi/strapi.git
+   git clone https://github.com/vkig2615/strapi-app.git
    cd strapi
    ```
 
@@ -234,6 +234,7 @@ This guide provides step-by-step instructions to deploy Strapi on a **Kubernetes
    Apply the manifest:
    ```sh
    kubectl apply -f strapi.yaml
+   
  ```##(strapi-ingress.yaml)##
 **Ingress (Expose Strapi) (strapi-ingress.yaml)**
 ```apiVersion: networking.k8s.io/v1
