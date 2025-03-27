@@ -30,4 +30,4 @@ jobs:
         env:
           ARGOCD_SERVER: localhost:8080
           ARGOCD_PASSWORD: dDRU33doqxn7lP5S
-OS
+
