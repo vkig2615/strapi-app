@@ -1,0 +1,10 @@
+image:
+  repository: strapi/strapi
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 1337
+
+persistence:
+  enabled: false
