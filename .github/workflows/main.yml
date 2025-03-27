@@ -17,10 +17,10 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Install ArgoCD CLI 
+      - name: Install ArgoCD CLI  ||
         run: |
-          curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-          chmod +x /usr/local/bin/argocd
+          curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64 ||
+          chmod +x /usr/local/bin/argocd ||
 
       - name: Sync Strapi Deployment
         run: |
@@ -30,3 +30,4 @@ jobs:
         env:
           ARGOCD_SERVER: localhost:8080
           ARGOCD_PASSWORD: dDRU33doqxn7lP5S
+OS
