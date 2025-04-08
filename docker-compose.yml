@@ -20,12 +20,19 @@ services:
     ports:
       - "1337:1337"
     environment:
-      DATABASE_CLIENT: postgres
-      DATABASE_HOST: postgres
-      DATABASE_PORT: 5432
-      DATABASE_NAME: strapi
-      DATABASE_USERNAME: strapi
-      DATABASE_PASSWORD: strapi_password
+      DATABASE_CLIENT: "postgres"
+      DATABASE_HOST: "postgres"
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: "strapi"
+      DATABASE_USERNAME: "strapi"
+      DATABASE_PASSWORD: "strapi_password"
+
+      APP_KEYS: "9f8070cf3b8a900cb61042d1e51a84fb5e3fc1c02c14b33bcc66a2405a064bc8,secondKeyHere"
+      ADMIN_JWT_SECRET: "0f67c7480e46be7933c9aaaf7794564b1c4867f377c15fd75aaaf7832bf0469e"
+      API_TOKEN_SALT: "wVDIKA5IV8bKcn9ttl/Wsg=="
+      TRANSFER_TOKEN_SALT: "UXVyWLpQOqSw9aLNVe6uhA=="
+      FLAG_NPS: "true"
+      FLAG_PROMOTE_EE: "false"
     depends_on:
       - postgres
 
