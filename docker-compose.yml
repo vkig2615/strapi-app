@@ -1,9 +1,8 @@
-version: "3"
+version: "3.8"
+
 services:
   postgres:
     image: postgres:13
-    container_name: strapi-postgres
-    restart: always
     environment:
       POSTGRES_USER: strapi
       POSTGRES_PASSWORD: strapi_password
@@ -14,13 +13,11 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   strapi:
-    build: .
-    container_name: strapi
-    restart: always
+    image: vk2615/strapi:latest  # <- prebuilt image
     ports:
       - "1337:1337"
     environment:
-      NODE_ENV: "production"  # ← Run Strapi in production mode
+      NODE_ENV: "production"
       DATABASE_CLIENT: "postgres"
       DATABASE_HOST: "postgres"
       DATABASE_PORT: "5432"
@@ -32,12 +29,12 @@ services:
       ADMIN_JWT_SECRET: "0f67c7480e46be7933c9aaaf7794564b1c4867f377c15fd75aaaf7832bf0469e"
       API_TOKEN_SALT: "wVDIKA5IV8bKcn9ttl/Wsg=="
       TRANSFER_TOKEN_SALT: "UXVyWLpQOqSw9aLNVe6uhA=="
-      JWT_SECRET: "++L1GiTBO08qvp+bnCdXpw=="  
+      JWT_SECRET: "++L1GiTBO08qvp+bnCdXpw=="
       FLAG_NPS: "true"
       FLAG_PROMOTE_EE: "false"
     depends_on:
       - postgres
-    command: "npm run start"  # ← Production start command
+    command: "npm run start"
 
 volumes:
   postgres_data:
